@@ -14,13 +14,11 @@ public class RemoteConfigHandler : MonoBehaviour
     public TMP_Text txt;
     Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
     
-    void Start()
-    {
+    private void Awake() {        
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
         if (dependencyStatus == Firebase.DependencyStatus.Available) {
           FetchDataAsync();
-            AppBrodaPlacementHandler.fetchAndSavePlacements();
         } else {
           showText(
             "Could not resolve all Firebase dependencies: " + dependencyStatus);
@@ -52,6 +50,7 @@ public class RemoteConfigHandler : MonoBehaviour
             .ContinueWithOnMainThread(task => {
                 showText(String.Format("Remote data loaded and ready (last fetch time {0}).",
                                     info.FetchTime));
+                AppBrodaPlacementHandler.fetchAndSavePlacements();
                                     
             });
 

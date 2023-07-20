@@ -23,6 +23,7 @@ public static class AppBrodaPlacementHandler
 
   public static string[] LoadPlacement(string key){
     string value = PlayerPrefs.GetString(key);
+    Debug.Log("raw placement value is"+value);
     if (value == "")
     {
         return new string[] { };
