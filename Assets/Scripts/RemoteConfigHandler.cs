@@ -7,14 +7,12 @@ using Firebase.Extensions;
 using Firebase.RemoteConfig;
 using System.Threading.Tasks;
 
-
-
 public class RemoteConfigHandler : MonoBehaviour
 {
     public TMP_Text txt;
     Firebase.DependencyStatus dependencyStatus = Firebase.DependencyStatus.UnavailableOther;
     
-    private void Awake() {        
+    private void Start() {
         Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task => {
         dependencyStatus = task.Result;
         if (dependencyStatus == Firebase.DependencyStatus.Available) {
@@ -50,7 +48,6 @@ public class RemoteConfigHandler : MonoBehaviour
             .ContinueWithOnMainThread(task => {
                 showText(String.Format("Remote data loaded and ready (last fetch time {0}).",
                                     info.FetchTime));
-                AppBrodaPlacementHandler.fetchAndSavePlacements();
                                     
             });
 
