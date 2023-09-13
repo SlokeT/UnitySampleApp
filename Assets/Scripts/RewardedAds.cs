@@ -5,81 +5,80 @@ using UnityEngine;
 using GoogleMobileAds;
 using GoogleMobileAds.Api;
 
-public class RewardedAds : MonoBehaviour{
-  int rewardedAdIndex = 0;
-  RewardedAd rewardedAd;
-  string[] adUnitIds;
+public class RewardedAds : MonoBehaviour
+{
+    int rewardedAdIndex;
+    RewardedAd rewardedAd;
+    string[] adUnitIds;
 
-  public void startLoadingRewardedAds(){
-    rewardedAdIndex = 0;
-    adUnitIds = AppBrodaPlacementHandler.LoadPlacement("com_AppBroda_testAdsDemo_Rewarded_1");
-    
-    LoadRewardedAd();
-  }
-
-  public void LoadRewardedAd(){
-    showText("Loading rewarded @index:"+rewardedAdIndex);
-    if(adUnitIds.Length == 0){
-      showText("Placement empty");
-      return;
+    public void startLoadingRewardedAds()
+    {
+        rewardedAdIndex = 0;
+        adUnitIds = AppBrodaPlacementHandler.LoadPlacement("com_AppBroda_testAdsDemo_Rewarded_1");
+        LoadRewardedAd();
     }
 
-    string adUnitId = adUnitIds[rewardedAdIndex];
-    var adRequest = new AdRequest();
-    RewardedAd.Load(adUnitId, adRequest,
-      (RewardedAd ad, LoadAdError error) => {
-        // if error is not null, the load request failed 
-        // we will try to load the ad using next id
-        if (error != null || ad == null) {
-          showText("Rewarded ad failed @index:"+rewardedAdIndex);
-          loadNextAd();
+    public void LoadRewardedAd()
+    {
+        showText("Loading rewarded @index:" + rewardedAdIndex);
+        if (adUnitIds == null || adUnitIds.Length == 0 || rewardedAdIndex >= adUnitIds.Length)
+        {
+            showText("Placement empty or not loaded");
+            return;
         }
 
-        showText("Rewarded ad loaded @index:"+rewardedAdIndex);
-
-        rewardedAd = ad;
-        ShowRewardedAd();
-    });
-  }
-
-  public void loadNextAd(){
-    rewardedAdIndex++;
-    if(rewardedAdIndex<adUnitIds.Length){
-      LoadRewardedAd();
+        string adUnitId = adUnitIds[rewardedAdIndex];
+        var adRequest = new AdRequest();
+        RewardedAd.Load(adUnitId, adRequest,
+          (RewardedAd ad, LoadAdError error) =>
+          {
+              if (error != null || ad == null)
+              {
+                  showText("Rewarded ad failed @index:" + rewardedAdIndex);
+                  loadNextAd();
+              }
+              else
+              {
+                  showText("Rewarded ad loaded @index:" + rewardedAdIndex);
+                  // Reset rewardedAdIndex to 0
+                  rewardedAdIndex = 0;
+                  rewardedAd = ad;
+                  ShowRewardedAd();
+              }
+          });
     }
-  }
 
-  public void ShowRewardedAd(){
-    const string rewardMsg =
-        "Rewarded ad rewarded the user. Type: {0}, amount: {1}.";
-    if (rewardedAd != null && rewardedAd.CanShowAd())
+    public void loadNextAd()
     {
-        rewardedAd.Show((Reward reward) =>
+        rewardedAdIndex++;
+        if (rewardedAdIndex >= adUnitIds.Length)
         {
-            // TODO: Reward the user.
-            Debug.Log("Ad Loaded @"+rewardedAdIndex);
-            UnlockRewardedAchievement();
-            Debug.Log(string.Format(rewardMsg, reward.Type, reward.Amount));
-        });
+            rewardedAdIndex = 0;
+            return;
+        }
+
+        LoadRewardedAd();
     }
-  }
 
-  public TMP_Text txt;
-	public void showText(string message){
-			txt.text = message;
-			Debug.Log(message);
-	}
+    public void ShowRewardedAd()
+    {
+        const string rewardMsg =
+            "Rewarded ad rewarded the user. Type: {0}, amount: {1}.";
+        if (rewardedAd != null && rewardedAd.CanShowAd())
+        {
+            rewardedAd.Show((Reward reward) =>
+            {
+                // TODO: Reward the user.
+                Debug.Log("Ad Loaded @" + rewardedAdIndex);
+                Debug.Log(string.Format(rewardMsg, reward.Type, reward.Amount));
+            });
+        }
+    }
 
-#region Google Play Games
-	GPGSManagerScript GPGSManager;
-	private void Start(){
-		GPGSManager = GameObject.FindObjectOfType(typeof(GPGSManagerScript)) as GPGSManagerScript;
-	}
-  string achievementId = "CgkI352R6rEXEAIQAw";
-  public void UnlockRewardedAchievement(){
-    GPGSManager.adShown();
-    GPGSManager.UnlockAchievement(achievementId);
-  }
-#endregion
-
+    public TMP_Text logText;
+    public void showText(string message)
+    {
+        logText.text = message;
+        Debug.Log(message);
+    }
 }
