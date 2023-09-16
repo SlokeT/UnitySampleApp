@@ -8,64 +8,62 @@ using System.Threading.Tasks;
 using Firebase.Extensions;
 using Firebase.RemoteConfig;
 
-public class BannerAds : MonoBehaviour{
-  int bannerIndex = 0;
-  string[] adUnitIds;
+public class BannerAds : MonoBehaviour
+{
+    int bannerIndex;
+    string[] adUnitIds;
 
-  public void startLoadingBannerAd(){
-    bannerIndex = 0;
-    adUnitIds = AppBrodaPlacementHandler.LoadPlacement("com_AppBroda_testAdsDemo_Banner_1");
-
-    loadBannerAd();
-  }
-
-  public void loadBannerAd(){
-    showText("Loading banner @index:"+bannerIndex);
-    if(adUnitIds.Length == 0){
-      showText("Placement empty");
-      return;
+    public void startLoadingBannerAd()
+    {
+        bannerIndex = 0;
+        adUnitIds = AppBrodaPlacementHandler.LoadPlacement("com_AppBroda_testAdsDemo_Banner_1");
+        loadBannerAd();
     }
 
-    string adUnitId = adUnitIds[bannerIndex];
-    BannerView bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Top);
-    var adRequest = new AdRequest();
-    bannerView.LoadAd(adRequest);
-      bannerView.OnBannerAdLoaded += () => {
-          showText("Banner ad loaded @index: "+bannerIndex);
-          UnlockBannerAchievement();
-      };
-      bannerView.OnBannerAdLoadFailed += (LoadAdError error) =>{
-      showText("Banner ad failed @index: ${bannerIndex}"
-          + error);
-            bannerView.Destroy();
+    public void loadBannerAd()
+    {
+        showText("Loading banner @index:" + bannerIndex);
+        if (adUnitIds == null || adUnitIds.Length == 0 || bannerIndex >= adUnitIds.Length)
+        {
+            showText("Placement empty or not loaded");
+            return;
+        }
+
+        string adUnitId = adUnitIds[bannerIndex];
+        BannerView bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.Top);
+        var adRequest = new AdRequest();
+        bannerView.LoadAd(adRequest);
+        bannerView.OnBannerAdLoaded += () =>
+        {
+            showText("Banner ad loaded @index:" + bannerIndex);
+            // Reset bannerIndex to 0
+            bannerIndex = 0;
+        };
+        bannerView.OnBannerAdLoadFailed += (LoadAdError error) =>
+        {
             loadNextAd();
-      };
-  }
-
-  public void loadNextAd(){
-    bannerIndex++;
-    if(bannerIndex<adUnitIds.Length){
-      loadBannerAd();
+            showText("Banner ad failed @index:" + bannerIndex
+                + error);
+            bannerView.Destroy();
+        };
     }
-  }
 
-  public TMP_Text txt;
-  public void showText(string message){
-      txt.text = message;
-      Debug.Log(message);
-  }
+    public void loadNextAd()
+    {
+        bannerIndex++;
+        if (bannerIndex >= adUnitIds.Length)
+        {
+            bannerIndex = 0;
+            return;
+        }
 
-#region Google Play Games
-  GPGSManagerScript GPGSManager;
-	private void Start(){
-		GPGSManager = GameObject.FindObjectOfType(typeof(GPGSManagerScript)) as GPGSManagerScript;
-	}
-  string achievementId = "CgkI352R6rEXEAIQAQ";
-  public void UnlockBannerAchievement(){
-    GPGSManager.adShown();
-    GPGSManager.UnlockAchievement(achievementId);
-  }
+        loadBannerAd();
+    }
 
-#endregion
-
+    public TMP_Text logText;
+    public void showText(string message)
+    {
+        logText.text = message;
+        Debug.Log(message);
+    }
 }
