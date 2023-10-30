@@ -41,10 +41,10 @@ public class BannerAds : MonoBehaviour
         };
         bannerView.OnBannerAdLoadFailed += (LoadAdError error) =>
         {
-            loadNextAd();
             showText("Banner ad failed @index:" + bannerIndex
                 + error);
             bannerView.Destroy();
+            loadNextAd();
         };
     }
 
