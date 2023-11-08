@@ -16,7 +16,7 @@ public class BannerAds : MonoBehaviour
     public void startLoadingBannerAd()
     {
         bannerIndex = 0;
-        adUnitIds = AppBrodaPlacementHandler.LoadPlacement("com_AppBroda_testAdsDemo_Banner_1");
+        adUnitIds = AppBrodaAdUnitHandler.LoadAdUnit("com_AppBroda_testAdsDemo_Banner_1");
         loadBannerAd();
     }
 
@@ -25,7 +25,7 @@ public class BannerAds : MonoBehaviour
         showText("Loading banner @index:" + bannerIndex);
         if (adUnitIds == null || adUnitIds.Length == 0 || bannerIndex >= adUnitIds.Length)
         {
-            showText("Placement empty or not loaded");
+            showText("Ad Unit empty or not loaded");
             return;
         }
 
