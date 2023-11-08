@@ -14,7 +14,7 @@ public class RewardedAds : MonoBehaviour
     public void startLoadingRewardedAds()
     {
         rewardedAdIndex = 0;
-        adUnitIds = AppBrodaPlacementHandler.LoadPlacement("com_AppBroda_testAdsDemo_Rewarded_1");
+        adUnitIds = AppBrodaAdUnitHandler.LoadAdUnit("com_AppBroda_testAdsDemo_Rewarded_1");
         LoadRewardedAd();
     }
 
@@ -23,7 +23,7 @@ public class RewardedAds : MonoBehaviour
         showText("Loading rewarded @index:" + rewardedAdIndex);
         if (adUnitIds == null || adUnitIds.Length == 0 || rewardedAdIndex >= adUnitIds.Length)
         {
-            showText("Placement empty or not loaded");
+            showText("Ad Unit empty or not loaded");
             return;
         }
 

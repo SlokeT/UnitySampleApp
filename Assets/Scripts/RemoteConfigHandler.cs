@@ -33,8 +33,7 @@ public class RemoteConfigHandler : MonoBehaviour
         showText("Fetching data...");
         System.Threading.Tasks.Task fetchTask =
         Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance.FetchAsync(
-            new TimeSpan(900));
-        // set the time span to 0s using 'TimeSpan.Zero' during testing
+            TimeSpan.Zero);
         return fetchTask.ContinueWithOnMainThread(FetchComplete);
     }
     //[END fetch_async]

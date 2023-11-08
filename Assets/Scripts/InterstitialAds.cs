@@ -14,7 +14,7 @@ public class InterstitialAds : MonoBehaviour
     public void startLoadingInterstitialAd()
     {
         interstitialAdIndex = 0;
-        adUnitIds = AppBrodaPlacementHandler.LoadPlacement("com_AppBroda_testAdsDemo_Interstitial_1");
+        adUnitIds = AppBrodaAdUnitHandler.LoadAdUnit("com_AppBroda_testAdsDemo_Interstitial_1");
         LoadInterstitialAd();
     }
     public void LoadInterstitialAd()
@@ -22,7 +22,7 @@ public class InterstitialAds : MonoBehaviour
         showText("Loading interstitial @index:" + interstitialAdIndex);
         if (adUnitIds == null || adUnitIds.Length == 0 || interstitialAdIndex >= adUnitIds.Length)
         {
-            showText("Placement empty or not loaded");
+            showText("Ad Unit empty or not loaded");
             return;
         }
 
